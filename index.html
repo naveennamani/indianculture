@@ -43,30 +43,21 @@
         const dp = new DOMParser();
         const dom = dp.parseFromString(res, "text/html");
         const iframe_url = dom.querySelectorAll("iframe")[0].src;
+        const pdf_url = new URL(iframe_url).searchParams.get("file");
         const filename = dom.querySelector(
           ".display-5 > span:nth-child(1)"
         ).innerText;
-        const pdf_url = new URL(iframe_url).searchParams.get("file");
-        const resp2 = await fetch(pdf_url, {
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0 (X11; Linux i686; rv:103.0) Gecko/20100101 Firefox/103.0",
-          },
-          referrer: iframe_url,
-          method: "GET",
-        });
-        const res2 = await resp2.blob();
-        const pdf_download_url = URL.createObjectURL(res2);
-        return { pdf_download_url, filename };
+        return { pdf_url, filename };
       }
       window.onload = () => {
         document.getElementById("download-form").onsubmit = async (e) => {
           e.preventDefault();
+          document.getElementById("pdf_download_url").innerHTML = "";
           const url = document.getElementById("url").value;
-          const { pdf_download_url, filename } = await getPDFDownloadURL(url);
+          const { pdf_url, filename } = await getPDFDownloadURL(url);
           document.getElementById(
             "pdf_download_url"
-          ).innerHTML = `<a href="${pdf_download_url}" download name="${filename}">Download PDF</a>`;
+          ).innerHTML = `<a href="${pdf_url}" download="${filename}.pdf">Download PDF</a>`;
         };
       };
     </script>

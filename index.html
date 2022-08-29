@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Download indianculture.com PDFs</title>
+    <style>
+      form {
+        display: flex;
+        flex-direction: column;
+        /* width: 50%; */
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        gap: 20px;
+        margin: 50px auto;
+      }
+      input {
+        width: 75%;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="download-form">
+      <label for="url"><h2>Enter URL of indianculture.gov.in</h2></label>
+      <br />
+      <input
+        type="url"
+        name="url"
+        id="url"
+        placeholder="Enter url"
+        pattern="https://indianculture.gov.in/.*"
+      />
+      <br />
+      <button type="submit">Download</button>
+      <div id="pdf_download_url"></div>
+    </form>
+    <script>
+      async function getPDFDownloadURL(url) {
+        const resp = await fetch(url);
+        const res = await resp.text();
+        const dp = new DOMParser();
+        const dom = dp.parseFromString(res, "text/html");
+        const iframe_url = dom.querySelectorAll("iframe")[0].src;
+        const filename = dom.querySelector(
+          ".display-5 > span:nth-child(1)"
+        ).innerText;
+        const pdf_url = new URL(iframe_url).searchParams.get("file");
+        const resp2 = await fetch(pdf_url, {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (X11; Linux i686; rv:103.0) Gecko/20100101 Firefox/103.0",
+          },
+          referrer: iframe_url,
+          method: "GET",
+        });
+        const res2 = await resp2.blob();
+        const pdf_download_url = URL.createObjectURL(res2);
+        return { pdf_download_url, filename };
+      }
+      window.onload = () => {
+        document.getElementById("download-form").onsubmit = async (e) => {
+          e.preventDefault();
+          const url = document.getElementById("url").value;
+          const { pdf_download_url, filename } = await getPDFDownloadURL(url);
+          document.getElementById(
+            "pdf_download_url"
+          ).innerHTML = `<a href="${pdf_download_url}" download name="${filename}">Download PDF</a>`;
+        };
+      };
+    </script>
+  </body>
+</html>

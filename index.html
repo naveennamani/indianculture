@@ -35,6 +35,7 @@
       <br />
       <button type="submit">Download</button>
       <div id="pdf_download_url"></div>
+      <button type="button" id="download-directly">Not working</button>
     </form>
     <script>
       async function getPDFDownloadURL(url) {
@@ -47,17 +48,34 @@
         const filename = dom.querySelector(
           ".display-5 > span:nth-child(1)"
         ).innerText;
-        return { pdf_url, filename };
+        return { iframe_url, pdf_url, filename };
+      }
+      function downloadDirectly(iframe_url, pdf_url, filename) {
+        fetch(pdf_url, {
+          referrer: iframe_url,
+          method: "post",
+        })
+          .then((x) => x.blob())
+          .then((b) => {
+            const blob_url = URL.createObjectURL(b);
+            document.getElementById("pdf_download_url").innerHTML = `
+                <a href="${blob_url}" download="${filename}.pdf">Download directly</a>`;
+          });
       }
       window.onload = () => {
         document.getElementById("download-form").onsubmit = async (e) => {
           e.preventDefault();
           document.getElementById("pdf_download_url").innerHTML = "";
           const url = document.getElementById("url").value;
-          const { pdf_url, filename } = await getPDFDownloadURL(url);
-          document.getElementById(
-            "pdf_download_url"
-          ).innerHTML = `<a href="${pdf_url}" download="${filename}.pdf">Download PDF</a>`;
+          const { iframe_url, pdf_url, filename } = await getPDFDownloadURL(
+            url
+          );
+          document.getElementById("pdf_download_url").innerHTML = `
+          <a href="${pdf_url}" download="${filename}.pdf">Download PDF</a>
+          `;
+          document.getElementById("download-directly").onclick = () => {
+            downloadDirectly(iframe_url, pdf_url, filename);
+          };
         };
       };
     </script>

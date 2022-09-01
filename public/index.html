@@ -43,7 +43,10 @@
         const res = await resp.text();
         const dp = new DOMParser();
         const dom = dp.parseFromString(res, "text/html");
-        const iframe_url = dom.querySelectorAll("iframe")[0].src;
+        let iframe_url = dom.querySelectorAll("iframe")[0].src;
+        const iframe_url_fixed = new URL(iframe_url);
+        iframe_url_fixed.host = "indianculture.gov.in";
+        iframe_url = iframe_url_fixed.href;
         const pdf_url = new URL(iframe_url).searchParams.get("file");
         const filename = dom.querySelector(
           ".display-5 > span:nth-child(1)"
@@ -53,7 +56,7 @@
       function downloadDirectly(iframe_url, pdf_url, filename) {
         fetch(pdf_url, {
           referrer: iframe_url,
-          method: "post",
+          method: "get",
         })
           .then((x) => x.blob())
           .then((b) => {

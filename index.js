@@ -19,8 +19,8 @@ app.get("/file", (req, res) => {
             host: "indianculture.gov.in"
         },
         referrer: referrer
-    }).then((res) => {
-        res.send(res.body);
+    }).then((result) => {
+        res.send(result.body);
     })
 });
 

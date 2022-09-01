@@ -1,7 +1,12 @@
 const express = require("express");
 const app = express();
+const port = process.env.PORT || 3000;
 
-app.get("/index.html", (req, res) => { res.sendFile("index.html") });
+app.use(express.static("public"));
+
+app.get("/hello", (req, res) => {
+    res.send("Hello world!");
+});
 
 app.get("/file", (req, res) => {
     const pdf_url = req.query.url;
@@ -18,4 +23,4 @@ app.get("/file", (req, res) => {
     })
 });
 
-app.listen(8000, () => console.log("Server started"));
+app.listen(port, () => console.log("Server started"));

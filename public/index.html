@@ -46,41 +46,34 @@
         let iframe_url = dom.querySelectorAll("iframe")[0].src;
         const iframe_url_fixed = new URL(iframe_url);
         iframe_url_fixed.host = "indianculture.gov.in";
+        iframe_url_fixed.port = "";
         iframe_url = iframe_url_fixed.href;
         const pdf_url = new URL(iframe_url).searchParams.get("file");
         const filename = dom.querySelector(
-          ".display-5 > span:nth-child(1)"
+            ".display-5 > span:nth-child(1)"
         ).innerText;
         return { iframe_url, pdf_url, filename };
-      }
-      function downloadDirectly(iframe_url, pdf_url, filename) {
-        fetch(pdf_url, {
-          referrer: iframe_url,
-          method: "get",
-        })
-          .then((x) => x.blob())
-          .then((b) => {
-            const blob_url = URL.createObjectURL(b);
-            document.getElementById("pdf_download_url").innerHTML = `
-                <a href="${blob_url}" download="${filename}.pdf">Download directly</a>`;
-          });
-      }
-      window.onload = () => {
+    }
+    window.onload = () => {
         document.getElementById("download-form").onsubmit = async (e) => {
-          e.preventDefault();
-          document.getElementById("pdf_download_url").innerHTML = "";
-          const url = document.getElementById("url").value;
-          const { iframe_url, pdf_url, filename } = await getPDFDownloadURL(
-            url
-          );
-          document.getElementById("pdf_download_url").innerHTML = `
-          <a href="${pdf_url}" download="${filename}.pdf">Download PDF</a>
-          `;
-          document.getElementById("download-directly").onclick = () => {
-            downloadDirectly(iframe_url, pdf_url, filename);
-          };
+            e.preventDefault();
+            document.getElementById("pdf_download_url").innerHTML = "";
+            const url = document.getElementById("url").value;
+            const { iframe_url, pdf_url, filename } = await getPDFDownloadURL(
+                url
+            );
+            document.getElementById("pdf_download_url").innerHTML = `
+      <a href="${pdf_url}" download="${filename}.pdf">Download PDF</a>
+      `;
+            document.getElementById("download-directly").onclick = () => {
+                let req_url = new URL("/file", document.baseURI);
+                req_url.searchParams.set("url", pdf_url);
+                req_url.searchParams.set("referrer", iframe_url);
+                document.getElementById("pdf_download_url").innerHTML =
+                    `<a href="${req_url.href}" download="${filename}.pdf">Download directly</a>`;
+            };
         };
-      };
-    </script>
+    };
+</script>
   </body>
 </html>

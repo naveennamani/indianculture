@@ -12,23 +12,36 @@ app.get("/hello", (req, res) => {
 app.get("/file", (req, res) => {
     const pdf_url = req.query.url;
     const referrer = req.query.referrer;
-    console.log(pdf_url, referrer);
     fetch(pdf_url, {
-        method: "get",
         headers: {
-            origin: "https://indianculture.gov.in",
-            host: "indianculture.gov.in",
-            "User-Agent": "Mozilla/5.0 (X11; Linux i686; rv:104.0) Gecko/20100101 Firefox/104.0",
-            "Accept": "*/*",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-origin",
+            accept: "*/*",
+            "accept-language": "en-US,en;q=0.9",
+            "cache-control": "no-cache",
+            pragma: "no-cache",
+            "sec-ch-ua":
+                '"Chromium";v="104", " Not A;Brand";v="99", "Microsoft Edge";v="104"',
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": '"Windows"',
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            Referer: referrer,
+            "Referrer-Policy": "no-referrer-when-downgrade",
         },
-        referrer: referrer
-    }).then((result) => {
-        res.send(result.body);
+        body: null,
+        method: "GET",
     })
+        .then(
+            (result) =>
+                new Promise((resolve, reject) => {
+                    result.body.pipe(res);
+                    result.body.on("end", () => {
+                        res.end();
+                        resolve("Stream end");
+                    });
+                })
+        )
+        .then((x) => console.log);
 });
 
 app.listen(port, () => console.log("Server started"));

@@ -31,17 +31,8 @@ app.get("/file", (req, res) => {
         body: null,
         method: "GET",
     })
-        .then(
-            (result) =>
-                new Promise((resolve, reject) => {
-                    result.body.pipe(res);
-                    result.body.on("end", () => {
-                        res.end();
-                        resolve("Stream end");
-                    });
-                })
-        )
-        .then((x) => console.log);
+        .then((res) => res.blob())
+        .then((bl) => res.send(bl));
 });
 
 app.listen(port, () => console.log("Server started"));

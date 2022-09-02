@@ -31,8 +31,8 @@ app.get("/file", (req, res) => {
         body: null,
         method: "GET",
     })
-        .then((res) => res.blob())
-        .then((bl) => res.send(bl));
+        .then((res) => res.arrayBuffer())
+        .then((buf) => res.send(buf));
 });
 
 app.listen(port, () => console.log("Server started"));

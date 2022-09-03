@@ -1,9 +1,24 @@
 {
-    "scripts": {
-        "start": "node ./index.js"
-    },
-    "dependencies": {
-        "express": "^4.17.3",
-        "node-fetch": "^2.0"
-    }
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.3",
+    "node-fetch": "^2.0"
+  },
+  "name": "indianculture",
+  "description": "A small script to download PDFs from https://indianculture.gov.in/ebooks/",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naveennamani/indianculture.git"
+  },
+  "author": "Naveen Namani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/naveennamani/indianculture/issues"
+  },
+  "homepage": "https://github.com/naveennamani/indianculture#readme"
 }

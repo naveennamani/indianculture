@@ -31,8 +31,13 @@ app.get("/file", (req, res) => {
         body: null,
         method: "GET",
     })
-        .then((res) => res.arrayBuffer())
-        .then((buf) => res.send(buf));
+        .then(async (result) => {
+            console.log(result);
+            for await (let chunk of result.body) {
+                res.write(chunk);
+            }
+            res.end();
+        });
 });
 
 app.listen(port, () => console.log("Server started"));

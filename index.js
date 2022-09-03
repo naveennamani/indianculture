@@ -31,14 +31,18 @@ app.get("/file", (req, res) => {
         body: null,
         method: "GET",
     })
-        .then(async (result) => {
-            let chunks = [];
-            for await (let chunk of result.body) {
-                chunks.push(chunk);
-            }
-            const final_buffer = Buffer.concat(chunks)
-            res.set('Content-Type', 'application/pdf').send(final_buffer).end();
-        });
+        .then(
+            (result) =>
+                new Promise((resolve, reject) => {
+                    result.body.pipe(res);
+                    result.body.on("end", () => {
+                        res.end();
+                        resolve("Stream end");
+                    });
+                    result.body.on("error", reject);
+                })
+        )
+        .then((x) => console.log);
 });
 
 app.listen(port, () => console.log("Server started"));

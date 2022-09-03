@@ -32,11 +32,12 @@ app.get("/file", (req, res) => {
         method: "GET",
     })
         .then(async (result) => {
-            console.log(result);
+            let chunks = [];
             for await (let chunk of result.body) {
-                res.write(chunk);
+                chunks.push(chunk);
             }
-            res.end();
+            const final_buffer = Buffer.concat(chunks)
+            res.set('Content-Type', 'application/pdf').send(final_buffer).end();
         });
 });
 
